@@ -1,0 +1,15 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Preview\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(534,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Test.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Source.cpp
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(94,15): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(97,13): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(106,13): warning C4244: '-=': conversion from 'float' to 'int', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(163,61): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(163,37): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(173,14): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(185,60): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(185,36): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(196,31): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(201,34): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(206,41): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\1PROJECTS\C++\Tetris\Test\Source.cpp(206,28): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Test.vcxproj -> D:\1PROJECTS\C++\Tetris\x64\Debug\Tetris.exe

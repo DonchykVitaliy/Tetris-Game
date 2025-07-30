@@ -1,0 +1,13 @@
+#pragma once
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <vector>
+#include <fstream>
+#include <SFML/Graphics.hpp>
+
+using namespace sf;
+using namespace std;
+
+int deathWindow(int score);
