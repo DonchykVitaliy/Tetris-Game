@@ -3,9 +3,10 @@
 
 using namespace std;
 
-    Figure::Figure(Type type)
+    Figure::Figure(Type type, ColorFigure color)
     {
-        this->type = type;          // зберігаємо тип
+        this->color = color;
+        this->type = type;
         generateType(type);
     }
 
@@ -60,14 +61,16 @@ using namespace std;
         }
     }
 
-    void Figure::move(int s)
+
+    //переміщення вправо та вліво
+    void Figure::move(int s,int field[fieldHeight][fieldWidth])
     {
         bool good = true;
         if (s == 1)
         {
-            //перевірка координат, чи не виходить за межі фігура
+            //перевірка координат, чи не виходить за межі фігура та немає перешкод зліва
             for (int i = 0; i < 4; i++) {
-                if (blocks[i].x < 1)
+                if (blocks[i].x < 1 || field[blocks[i].y][blocks[i].x-1])
                     good = false;
             }
 
@@ -82,9 +85,9 @@ using namespace std;
         }
         else
         {
-            //перевірка координат, чи не виходить за межі фігура
+            //перевірка координат, чи не виходить за межі фігура та немає перешкод справа
             for (int i = 0; i < 4; i++) {
-                if (blocks[i].x > 8)
+                if (blocks[i].x > 8 || field[blocks[i].y][blocks[i].x + 1])
                     good = false;
             }
 
@@ -108,6 +111,8 @@ using namespace std;
         }
     }
 
+
+    //бистре падіння
     void Figure::fastFall(int field[fieldHeight][fieldWidth])
     {
         bool good = true;
@@ -137,6 +142,8 @@ using namespace std;
         }
     }
 
+
+    //крутити фігуру
     void Figure::rotate(int field[fieldHeight][fieldWidth])
     {
         if (type == two)        //якщо це квадрат, то пропуск
@@ -184,4 +191,32 @@ using namespace std;
     const sf::Vector2i* Figure::getCord() const
     {
         return blocks;
+    }
+
+
+    //колір
+    sf::Color Figure::getColor() const
+    {
+        switch (color)
+        {
+        case red:
+            return sf::Color::Red;
+        case blue:
+            return sf::Color::Blue;
+        case green:
+            return sf::Color::Green;
+        case yellow:
+            return sf::Color::Yellow;
+        case purple:
+            return sf::Color(128, 0, 128); // пурпурний
+        case cyan:
+            return sf::Color::Cyan;
+        default:
+            return sf::Color::White;
+        }
+    }
+
+    ColorFigure Figure::getColorEnum() const
+    {
+        return color;
     }

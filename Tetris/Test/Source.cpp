@@ -11,14 +11,18 @@
 #include "deathWindow.h"
 #include "infoWindow.h"
 
+sf::Color getSFMLColor(ColorFigure c);
+
 using namespace sf;
 using namespace std;
 
 World world;
 Font font;
+ColorFigure color;
 Type type = None;
 Direction moveSite = No;
 Clock moveClock;
+bool stopGame = false;
 const int tileSize = 50; // розм≥р блоку
 const int offsetX = 150; // рамка зл≥ва
 const int offsetY = 0;   // верхн≥й в≥дступ (0 Ч ф≥гура починаЇ з самого верху)
@@ -34,7 +38,6 @@ int main()
 
 	Figure* figure = nullptr;
 	sf::RectangleShape blockShape(sf::Vector2f(50.f, 50.f));
-	blockShape.setFillColor(sf::Color::Cyan);
 
 	srand(static_cast<unsigned>(time(0)));
 	RenderWindow window(VideoMode(weight, height), "Tetris");
@@ -75,7 +78,7 @@ int main()
 				}
 			}
 			if (event.type == Event::KeyPressed) {
-				if (event.key.code == Keyboard::Space) {
+				if (event.key.code == Keyboard::Space || event.key.code == Keyboard::Up) {
 					cout << "space";
 					ChangeSite = true;
 				}
@@ -107,6 +110,30 @@ int main()
 		} while (LineH);
 
 
+		//buttons
+		if (ChangeSite)
+		{
+			figure->rotate(world.getField());
+			ChangeSite = false;
+		}
+
+		if (moveSite != No)
+		{
+			if (moveSite == Down)			//бистро до низу
+				figure->fastFall(world.getField());
+			else if (moveSite == Left)		//вл≥во
+				figure->move(1,world.getField());
+			else
+				figure->move(2, world.getField());			//вправо
+
+			//back to default
+			moveSite = No;
+		}
+
+		//stop game
+		if (stopGame)
+			cout << "STOP" << endl;
+
 		//time
 		static Clock fallClock;
 		if (fallClock.getElapsedTime().asSeconds() > 0.6f && figure) {
@@ -121,34 +148,17 @@ int main()
 				}
 			}
 
+
 			if (stop) {		//€кщо ф≥гура дос€гла низу, то вона ф≥ксуЇтьс€ + видал€Їтьс€ обЇкт
+				stopGame = world.getStop();
 				world.fixFigure(figure);
+				world.checkLines();
 				world.figureP();
 				delete figure;
 				figure = nullptr;
 			}
 			else {
 				figure->fall();		//€кщо ще не впала, то в≥дтворюЇтьс€ пад≥нн€
-
-				//buttons
-				if (ChangeSite)
-				{
-					figure->rotate(world.getField());
-					ChangeSite = false;
-				}
-
-				if (moveSite != No)
-				{
-					if (moveSite == Down)			//бистро до низу
-						figure->fastFall(world.getField());
-					else if (moveSite == Left)		//вл≥во
-						figure->move(1);
-					else
-						figure->move(2);			//вправо
-
-					//back to default
-					moveSite = No;
-				}
 			}
 
 			fallClock.restart();
@@ -156,10 +166,13 @@ int main()
 
 
 		//figure
-		int(*field)[fieldWidth] = world.getField();
+		int(*field)[fieldWidth] = world.getField();					//корди
+		ColorFigure(*colors)[fieldWidth] = world.getColorField(); //кол≥р
+
 		for (int y = 0; y < fieldHeight; y++) {
 			for (int x = 0; x < fieldWidth; x++) {
 				if (field[y][x]) {
+					blockShape.setFillColor(getSFMLColor(colors[y][x]));
 					blockShape.setPosition(offsetX + x * tileSize, offsetY + y * tileSize);
 					window.draw(blockShape);
 				}
@@ -170,13 +183,15 @@ int main()
 		if (world.getBool())
 		{
 			if (figure) delete figure; // прибираЇмо стару, €кщо треба
-			srand(time(0));
 			type = static_cast<Type>(rand() % 5);	// рандом ф≥гура
-			figure = new Figure(type);
+			color = static_cast<ColorFigure>(rand() % 5);	// рандом ф≥гура
+			figure = new Figure(type, color);
 			world.figureM();
 		}
 
 		if (figure) {
+			blockShape.setFillColor(figure->getColor());
+
 			const sf::Vector2i* cords = figure->getCord();
 			for (int i = 0; i < 4; i++) {
 				int x = cords[i].x;
@@ -193,17 +208,22 @@ int main()
 
 		// Score
 		Text scoreT("Score: ", font, 40);
-		scoreT.setPosition(5, height-150);
+		scoreT.setPosition(5.f, height-150.f);
 		scoreT.setFillColor(Color::White);
 		window.draw(scoreT);
+
+		Text score(to_string(world.getScore()), font, 40.f);
+		score.setPosition(5.f, height - 100.f);
+		score.setFillColor(Color::White);
+		window.draw(score);
 		// Time
-		Text timerT("Time: ", font, 40);
-		timerT.setPosition(350, height - 150);
+		Text timerT("Time: ", font, 40.f);
+		timerT.setPosition(350.f, height - 150.f);
 		timerT.setFillColor(Color::White);
 		window.draw(timerT);
 		// Next figure
-		Text infoT("Next figure:", font, 40);
-		infoT.setPosition(weight - 230, height-150);
+		Text infoT("Next figure:", font, 40.f);
+		infoT.setPosition(weight - 230.f, height-150.f);
 		infoT.setFillColor(Color::White);
 		window.draw(infoT);
 
@@ -215,4 +235,19 @@ int main()
 		window.display();
 	}
 	return 0;
+}
+
+
+sf::Color getSFMLColor(ColorFigure c)
+{
+	switch (c)
+	{
+	case red: return sf::Color::Red;
+	case blue: return sf::Color::Blue;
+	case green: return sf::Color::Green;
+	case yellow: return sf::Color::Yellow;
+	case purple: return sf::Color(128, 0, 128);
+	case cyan: return sf::Color::Cyan;
+	default: return sf::Color::White;
+	}
 }

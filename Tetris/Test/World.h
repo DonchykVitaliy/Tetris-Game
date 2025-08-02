@@ -2,12 +2,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-
-const int fieldWidth = 10;
-const int fieldHeight = 15;
-
-
-enum Direction { Up, Down, Left, Right, No };
+#include "Types.h"
 
 class Figure;
 
@@ -19,13 +14,19 @@ public:
     ~World();
 
     bool getBool();
+    int getScore();
+    bool getStop();
     void figureP();
     void figureM();
 
+    ColorFigure(*getColorField())[fieldWidth]; // метод доступу
     int (*getField())[fieldWidth];              // доступ до поля
     void fixFigure(const Figure* figure);       // зберегти фігуру в полі
+    void checkLines();                          // перевірка рядків
 
 private:
     bool needFigure;
     int field[fieldHeight][fieldWidth];         // саме поле
+    int score;
+    ColorFigure colorField[fieldHeight][fieldWidth];
 };

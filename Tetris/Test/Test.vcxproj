@@ -143,6 +143,7 @@
     <ClInclude Include="infoWindow.h" />
     <ClInclude Include="inputSettings.h" />
     <ClInclude Include="Figure.h" />
+    <ClInclude Include="Types.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

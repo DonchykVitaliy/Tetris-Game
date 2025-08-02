@@ -3,24 +3,25 @@
 #include <vector>
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include "Types.h"
 
 using namespace std;
-
-enum Type { one, two, three, four, five, None };
 
 class Figure
 {
 public:
 
-    Figure(Type type);
+    Figure(Type type, ColorFigure color);
     ~Figure();
 
     int getType();
     const sf::Vector2i* getCord() const;
+    sf::Color getColor() const;
+    ColorFigure getColorEnum() const;
 
     void generateType(Type t);
 
-    void move(int s);
+    void move(int s, int field[fieldHeight][fieldWidth]);
     void fall();
     void fastFall(int field[fieldHeight][fieldWidth]);
     void rotate(int field[fieldHeight][fieldWidth]);
@@ -28,5 +29,6 @@ public:
 
 private:
     Type type;
+    ColorFigure color;
     sf::Vector2i blocks[4];
 };
