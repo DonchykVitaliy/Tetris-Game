@@ -3,6 +3,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Types.h"
+#include <SFML/Audio.hpp>
+
+using namespace sf;
+using namespace std;
 
 class Figure;
 
@@ -29,4 +33,8 @@ private:
     int field[fieldHeight][fieldWidth];         // саме поле
     int score;
     ColorFigure colorField[fieldHeight][fieldWidth];
+
+    //sound
+    SoundBuffer bufferLine;
+    Sound line;
 };

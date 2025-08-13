@@ -132,16 +132,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="deathWindow.cpp" />
-    <ClCompile Include="infoWindow.cpp" />
-    <ClCompile Include="inputSettings.cpp" />
     <ClCompile Include="Figure.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="deathWindow.h" />
-    <ClInclude Include="infoWindow.h" />
-    <ClInclude Include="inputSettings.h" />
     <ClInclude Include="Figure.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="World.h" />

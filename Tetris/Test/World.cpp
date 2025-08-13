@@ -6,6 +6,9 @@ using namespace std;
     //****
     World::World()
     {
+        bufferLine.loadFromFile("line.wav");
+        line.setBuffer(bufferLine);
+
         needFigure = true;
 
         //очистка поля
@@ -95,7 +98,7 @@ using namespace std;
 
             if (full)
             {
-                // Зсуваємо всі рядки над поточним вниз
+                //зсув всіх рядків вниз
                 for (int row = y; row > 0; row--)
                 {
                     for (int x = 0; x < fieldWidth; x++)
@@ -104,12 +107,13 @@ using namespace std;
                     }
                 }
 
-                // Верхній рядок очищаємо
+                //видалення верхнього
                 for (int x = 0; x < fieldWidth; x++)
                 {
                     field[0][x] = 0;
                 }
 
+                line.play();
                 y++; //перевірка того ж рядка ще раз
                 score += 10;
             }

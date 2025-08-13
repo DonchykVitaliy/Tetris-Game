@@ -1,8 +1,6 @@
 #include "Figure.h"
 #include "World.h"
 
-using namespace std;
-
     Figure::Figure(Type type, ColorFigure color)
     {
         this->color = color;
@@ -208,7 +206,7 @@ using namespace std;
         case yellow:
             return sf::Color::Yellow;
         case purple:
-            return sf::Color(128, 0, 128); // пурпурний
+            return sf::Color(128, 0, 128); //фіол
         case cyan:
             return sf::Color::Cyan;
         default:

@@ -4,28 +4,31 @@
 #include <time.h>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 //classes
 #include "World.h"
 #include "Figure.h"
 //windows
 #include "deathWindow.h"
-#include "infoWindow.h"
 
 sf::Color getSFMLColor(ColorFigure c);
+void setLines(int weight, int height, RenderWindow *window);
 
 using namespace sf;
 using namespace std;
 
-World world;
-Font font;
-ColorFigure color;
-Type type = None;
-Direction moveSite = No;
-Clock moveClock;
-bool stopGame = false;
-const int tileSize = 50; // розмір блоку
-const int offsetX = 150; // рамка зліва
-const int offsetY = 0;   // верхній відступ (0 — фігура починає з самого верху)
+World world;			 //базовий клас
+Font font;				 //шрифт для тексту
+ColorFigure color;		 //колір фігури
+Type type = None;		 //тип фігури
+Direction moveSite = No; //переміщення фігури в боки та низ
+Clock moveClock;		 //таймер для падіння
+bool stopGame = false;	 //кінець гри
+const int tileSize = 50; //розмір блоку
+const int offsetX = 150; //рамка зліва
+const int offsetY = 0;   //верхній відступ
+
+
 
 
 int main()
@@ -33,11 +36,21 @@ int main()
 	Color gray(187, 187, 187);
 	font.loadFromFile("arial.ttf");
 
+	//sounds
+	SoundBuffer bufferDown;
+	bufferDown.loadFromFile("down.wav");
+	Sound down;
+	down.setBuffer(bufferDown);
+	SoundBuffer bufferRotate;
+	bufferRotate.loadFromFile("rotate.wav");
+	Sound rotate;
+	rotate.setBuffer(bufferRotate);
+
 	bool ChangeSite = false;
 	int weight = 800, height = 900;
 
 	Figure* figure = nullptr;
-	sf::RectangleShape blockShape(sf::Vector2f(50.f, 50.f));
+	RectangleShape blockShape(Vector2f(50.f, 50.f));
 
 	srand(static_cast<unsigned>(time(0)));
 	RenderWindow window(VideoMode(weight, height), "Tetris");
@@ -88,26 +101,7 @@ int main()
 		window.clear(Color::Black);
 
 		// лінії
-		int LineW = weight;
-		do {
-			if (LineW >= 150 && LineW <= 650)
-			{
-				RectangleShape line(Vector2f(2.f, height - 150.f));
-				line.setFillColor(Color::White);
-				line.move(LineW, 0.f);
-				window.draw(line);
-			}
-			LineW -= 50.f;
-		} while (LineW);
-
-		int LineH = height;
-		do {
-			RectangleShape line(Vector2f(weight - 300.f, 2.f));
-			line.setFillColor(Color::White);
-			line.move(150.f, LineH-150.f);
-			window.draw(line);
-			LineH -= 50.f;
-		} while (LineH);
+		setLines(weight, height, &window);
 
 
 		//buttons
@@ -115,8 +109,8 @@ int main()
 		{
 			figure->rotate(world.getField());
 			ChangeSite = false;
+			rotate.play();
 		}
-
 		if (moveSite != No)
 		{
 			if (moveSite == Down)			//бистро до низу
@@ -130,9 +124,11 @@ int main()
 			moveSite = No;
 		}
 
+
 		//stop game
 		if (stopGame)
-			cout << "STOP" << endl;
+			deathWindow(world.getScore());
+
 
 		//time
 		static Clock fallClock;
@@ -156,6 +152,7 @@ int main()
 				world.figureP();
 				delete figure;
 				figure = nullptr;
+				down.play();
 			}
 			else {
 				figure->fall();		//якщо ще не впала, то відтворюється падіння
@@ -180,7 +177,7 @@ int main()
 		}
 
 
-		if (world.getBool())
+		if (world.getBool())		//перевірка чи треба нова фігура
 		{
 			if (figure) delete figure; // прибираємо стару, якщо треба
 			type = static_cast<Type>(rand() % 5);	// рандом фігура
@@ -189,9 +186,9 @@ int main()
 			world.figureM();
 		}
 
+		//якщо створена нова фігура, то її налаштовує
 		if (figure) {
 			blockShape.setFillColor(figure->getColor());
-
 			const sf::Vector2i* cords = figure->getCord();
 			for (int i = 0; i < 4; i++) {
 				int x = cords[i].x;
@@ -201,8 +198,6 @@ int main()
 				window.draw(blockShape);
 			}
 		}
-
-		
 
 
 
@@ -228,9 +223,6 @@ int main()
 		window.draw(infoT);
 
 
-		
-
-
 		// рендер вікна
 		window.display();
 	}
@@ -238,6 +230,7 @@ int main()
 }
 
 
+//колір для фігури
 sf::Color getSFMLColor(ColorFigure c)
 {
 	switch (c)
@@ -250,4 +243,30 @@ sf::Color getSFMLColor(ColorFigure c)
 	case cyan: return sf::Color::Cyan;
 	default: return sf::Color::White;
 	}
+}
+
+
+//візуалізація клітинок
+void setLines(int weight, int height, RenderWindow* window)
+{
+	int LineW = weight;
+	do {
+		if (LineW >= 150 && LineW <= 650)
+		{
+			RectangleShape line(Vector2f(2.f, height - 150.f));
+			line.setFillColor(Color::White);
+			line.move(LineW, 0.f);
+			window->draw(line);
+		}
+		LineW -= 50.f;
+	} while (LineW);
+
+	int LineH = height;
+	do {
+		RectangleShape line(Vector2f(weight - 300.f, 2.f));
+		line.setFillColor(Color::White);
+		line.move(150.f, LineH - 150.f);
+		window->draw(line);
+		LineH -= 50.f;
+	} while (LineH);
 }
