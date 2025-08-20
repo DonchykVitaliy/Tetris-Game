@@ -21,6 +21,7 @@ World world;			 //базовий клас
 Font font;				 //шрифт для тексту
 ColorFigure color;		 //колір фігури
 Type type = None;		 //тип фігури
+Type typeNext = None;	 //тип фігури
 Direction moveSite = No; //переміщення фігури в боки та низ
 Clock moveClock;		 //таймер для падіння
 bool stopGame = false;	 //кінець гри
@@ -49,8 +50,12 @@ int main()
 	bool ChangeSite = false;
 	int weight = 800, height = 900;
 
-	Figure* figure = nullptr;
+	Figure* figure;
+	Figure* nextFigure;
+	nextFigure = new Figure(static_cast<Type>(rand() % 5), static_cast<ColorFigure>(rand() % 6));
+	figure = new Figure(static_cast<Type>(rand() % 5), static_cast<ColorFigure>(rand() % 6));
 	RectangleShape blockShape(Vector2f(50.f, 50.f));
+	RectangleShape nextShape(Vector2f(5.f, 5.f));
 
 	srand(static_cast<unsigned>(time(0)));
 	RenderWindow window(VideoMode(weight, height), "Tetris");
@@ -132,6 +137,7 @@ int main()
 
 		//time
 		static Clock fallClock;
+		static Clock gameTime;
 		if (fallClock.getElapsedTime().asSeconds() > 0.6f && figure) {
 			bool stop = false;
 			//тимчасова перевірка зіткнення фігур та низу
@@ -151,7 +157,10 @@ int main()
 				world.checkLines();
 				world.figureP();
 				delete figure;
-				figure = nullptr;
+
+				figure = nextFigure;
+				typeNext = static_cast<Type>(rand() % 5);	// рандом фігура
+				nextFigure = new Figure(static_cast<Type>(rand() % 5), static_cast<ColorFigure>(rand() % 6));
 				down.play();
 			}
 			else {
@@ -177,14 +186,6 @@ int main()
 		}
 
 
-		if (world.getBool())		//перевірка чи треба нова фігура
-		{
-			if (figure) delete figure; // прибираємо стару, якщо треба
-			type = static_cast<Type>(rand() % 5);	// рандом фігура
-			color = static_cast<ColorFigure>(rand() % 5);	// рандом фігура
-			figure = new Figure(type, color);
-			world.figureM();
-		}
 
 		//якщо створена нова фігура, то її налаштовує
 		if (figure) {
@@ -216,11 +217,31 @@ int main()
 		timerT.setPosition(350.f, height - 150.f);
 		timerT.setFillColor(Color::White);
 		window.draw(timerT);
+
+		int timeGame = gameTime.getElapsedTime().asSeconds();
+		Text timer(to_string(timeGame), font, 40.f);
+		timer.setPosition(350.f, height - 100.f);
+		timer.setFillColor(Color::White);
+		window.draw(timer);
 		// Next figure
 		Text infoT("Next figure:", font, 40.f);
 		infoT.setPosition(weight - 230.f, height-150.f);
 		infoT.setFillColor(Color::White);
 		window.draw(infoT);
+
+		sf::RectangleShape nextShape(Vector2f(tileSize, tileSize));
+		nextShape.setFillColor(nextFigure->getColor());
+		int previewOffsetX = weight - 380;
+		int previewOffsetY = height - 102;
+		const sf::Vector2i* cords = nextFigure->getCord();
+		for (int i = 0; i < 4; i++) {
+			int x = cords[i].x;
+			int y = cords[i].y;
+
+			nextShape.setPosition(previewOffsetX + x * tileSize, previewOffsetY + y * tileSize);
+			window.draw(nextShape);
+		}
+
 
 
 		// рендер вікна
